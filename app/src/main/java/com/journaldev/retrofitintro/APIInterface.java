@@ -22,6 +22,9 @@ interface APIInterface {
     @GET("/2/rsvps")
     Call<Example> getRSVP(@Query("key") String apiKey, @Query("event_id") String eventID);
     // Call Class RSVP to store JSON data in pojo serialisation ??
+
+    @GET("/2/events")
+    Call<Example> getEVENT(@Query("key") String apiKey, @Query("group_urlname") String group_name);
 /*
     @FormUrlEncoded
     @POST("/api/users?")

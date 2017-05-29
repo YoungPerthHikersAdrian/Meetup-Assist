@@ -23,7 +23,7 @@ class APIClient {
 
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.meetup.com")//Change this to meetupapi
+                .baseUrl("https://api.meetup.com")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();

@@ -4,7 +4,7 @@
     tools:context=".MainActivity">
 
     <item
-        android:id="@+id/action_search"
+        android:id="@+id/action_event"
         android:orderInCategory="100"
         android:icon="@drawable/ic_event"
         app:showAsAction="ifRoom" />
