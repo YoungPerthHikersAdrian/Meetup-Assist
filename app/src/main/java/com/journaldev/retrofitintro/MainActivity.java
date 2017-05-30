@@ -15,17 +15,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.journaldev.retrofitintro.TaskTable.TaskContract;
+import com.journaldev.retrofitintro.eventpojo.EventResult;
 import com.journaldev.retrofitintro.pojo.Example;
-import com.journaldev.retrofitintro.pojo.Member;
-import com.journaldev.retrofitintro.pojo.Meta;
-import com.journaldev.retrofitintro.pojo.Result;
-import com.journaldev.retrofitintro.pojo.MemberPhoto;
+
+import com.journaldev.retrofitintro.eventpojo.EventExample;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.jar.Attributes;
-import android.widget.ArrayAdapter;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,11 +93,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Example> call, Response<Example> response) {
 
-                List<Result> ResList= response.body().getResults();
+                List<com.journaldev.retrofitintro.pojo.Result> ResList= response.body().getResults();
 
                 SQLiteDatabase db = mHelper.getWritableDatabase();
                 ContentValues values = new ContentValues();
-                for (Result  Result: ResList) {
+                for (com.journaldev.retrofitintro.pojo.Result Result: ResList) {
 
                     values.put(TaskContract.TaskEntry.COLUMN1_NAME,Result.getMember().getMemberId());
                     values.put(TaskContract.TaskEntry.COLUMN2_NAME,Result.getMember().getName());
@@ -125,17 +122,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-
-
-        //TODO
-        //Delete button
-        //tick boxes
-        //display upcoming events
-        //
-
-
-
-    }
+     }
  public List getNames( List data) {
     // int i = 0;
      final String TABLE_NAME = "AttendTable";
@@ -188,34 +175,26 @@ public String[] getEvents(){
     //Get list of upcoming events
     apiInterface = APIClient.getClient().create(APIInterface.class);
 
-    Call<Example> call = apiInterface.getEVENT(API_KEY,GROUP_NAME);
-    call.enqueue(new Callback<Example>() {
+    Call<EventExample> call = apiInterface.getEVENT(API_KEY,GROUP_NAME);
+    call.enqueue(new Callback<EventExample>() {
 
         @Override
-        public void onResponse(Call<Example> call, Response<Example> response) {
+        public void onResponse(Call<EventExample> call, Response<EventExample> response) {
 
-                List<Result> ResList= response.body().getResults();
+                List<EventResult> ResList= response.body().getEventResults();
                 List<String> eventName = new ArrayList<String>();
 
+            for(com.journaldev.retrofitintro.eventpojo.EventResult Result: ResList){
 
-                ContentValues values = new ContentValues();
-                for (Result  Result: ResList) {
-
-                  // eventName.add(Result.getEvent().getName());
-                    //Log.v("TAG",Result.getEvent().getName());
-                    //Result.getEvent().getId();
-
-                }
-           // ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.list_layout,eventName);
-
-           // ListView listview = (ListView) findViewById(R.id.list1);
-            //listview.setAdapter(adapter);
-        }
+                Log.d("**TAG**", EventResult.class.getName());
+                Log.d("**TAG**", ResList.toString());
+            }
+         }
 
         @Override
-        public void onFailure(Call<Example> call, Throwable t) {
+        public void onFailure(Call<EventExample> call, Throwable t) {
             Log.e("Failed on:", t.toString());
-            call.cancel();
+            //call.cancel();
             Toast.makeText(getApplicationContext(), "FAIL", Toast.LENGTH_LONG).show();
         }
 

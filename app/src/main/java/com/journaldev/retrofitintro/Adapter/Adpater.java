@@ -22,7 +22,7 @@ import java.util.List;
 /*
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
-    private List<Result> test;
+    private List<EventResult> test;
     private int rowLayout;
     private Context context;
 

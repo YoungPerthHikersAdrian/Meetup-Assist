@@ -30,11 +30,11 @@ public class Example {
         this.results = results;
     }
 
-    public Meta getMeta() {
+    public Meta getEventMeta() {
         return meta;
     }
 
-    public void setMeta(Meta meta) {
+    public void setEventMeta(Meta meta) {
         this.meta = meta;
     }
 

@@ -1,14 +1,13 @@
-package com.journaldev.retrofitintro.pojo;
-
-/**
- * Created by aj_wi on 29/05/2017.
- */
+package com.journaldev.retrofitintro.eventpojo;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Fee {
+/**
+ * Created by aj_wi on 30/05/2017.
+ */
 
+public class EventFee {
     @SerializedName("amount")
     @Expose
     private Long amount;
@@ -75,5 +74,6 @@ public class Fee {
     public void setRequired(String required) {
         this.required = required;
     }
+
 
 }
