@@ -7,7 +7,8 @@ import com.google.gson.annotations.SerializedName;
  * Created by aj_wi on 30/05/2017.
  */
 
-public class EventVenue {
+public class Venue {
+
     @SerializedName("country")
     @Expose
     private String country;
@@ -25,13 +26,13 @@ public class EventVenue {
     private String name;
     @SerializedName("lon")
     @Expose
-    private Long lon;
+    private Double lon;
     @SerializedName("id")
     @Expose
-    private Long id;
+    private Integer id;
     @SerializedName("lat")
     @Expose
-    private Long lat;
+    private Double lat;
     @SerializedName("repinned")
     @Expose
     private Boolean repinned;
@@ -76,27 +77,27 @@ public class EventVenue {
         this.name = name;
     }
 
-    public Long getLon() {
+    public Double getLon() {
         return lon;
     }
 
-    public void setLon(Long lon) {
+    public void setLon(Double lon) {
         this.lon = lon;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Long getLat() {
+    public Double getLat() {
         return lat;
     }
 
-    public void setLat(Long lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
@@ -107,4 +108,5 @@ public class EventVenue {
     public void setRepinned(Boolean repinned) {
         this.repinned = repinned;
     }
+
 }

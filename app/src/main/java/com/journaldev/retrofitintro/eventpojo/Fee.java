@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by aj_wi on 30/05/2017.
  */
 
-public class EventFee {
+public class Fee {
     @SerializedName("amount")
     @Expose
     private Long amount;

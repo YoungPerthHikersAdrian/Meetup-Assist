@@ -15,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.journaldev.retrofitintro.TaskTable.TaskContract;
-import com.journaldev.retrofitintro.eventpojo.EventResult;
+import com.journaldev.retrofitintro.eventpojo.Result;
 import com.journaldev.retrofitintro.pojo.Example;
 
 import com.journaldev.retrofitintro.eventpojo.EventExample;
@@ -55,8 +55,7 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_event) {
             getEvents();
-//           deleteAll();
-  //         getNames();
+
            //inflate new acticity
 
             return true;
@@ -108,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 db.close();
-                //deleteAll();
                 getNames();
 
 
@@ -136,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
          if (cursor.moveToFirst()) {
              do {
                  data.add(cursor.getString(0));
-                 //i++;
-             } while (cursor.moveToNext());
+                } while (cursor.moveToNext());
          }
      }
      db.close();
@@ -173,6 +170,9 @@ public String[] getEvents(){
     getNames();
 
     //Get list of upcoming events
+
+    //maybe approach this diffrently
+    //Meta group storing correctly, result is null ? Naming conflict
     apiInterface = APIClient.getClient().create(APIInterface.class);
 
     Call<EventExample> call = apiInterface.getEVENT(API_KEY,GROUP_NAME);
@@ -181,15 +181,25 @@ public String[] getEvents(){
         @Override
         public void onResponse(Call<EventExample> call, Response<EventExample> response) {
 
-                List<EventResult> ResList= response.body().getEventResults();
+                List<Result> EvList= response.body().getEventResults();
                 List<String> eventName = new ArrayList<String>();
 
-            for(com.journaldev.retrofitintro.eventpojo.EventResult Result: ResList){
 
-                Log.d("**TAG**", EventResult.class.getName());
-                Log.d("**TAG**", ResList.toString());
-            }
-         }
+                ContentValues values = new ContentValues();
+              for (Result  Result: EvList) {
+
+                    //(eventName.add(com.journaldev.retrofitintro.eventpojo.Result.class.getName()));
+
+                   eventName.add(Result.getName());
+                    Log.v("**!**",Result.getName());
+
+
+              }
+           ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.list_layout,eventName);
+
+            ListView listview = (ListView) findViewById(R.id.list1);
+            listview.setAdapter(adapter);
+        }
 
         @Override
         public void onFailure(Call<EventExample> call, Throwable t) {

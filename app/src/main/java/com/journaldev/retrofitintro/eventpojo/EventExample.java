@@ -10,27 +10,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class EventExample {
 
-    @SerializedName("eventResults")
+    @SerializedName("results")
     @Expose
-    private List<EventResult> Results = null;
+    private List<Result> Result = null;
     @SerializedName("meta")
     @Expose
-    private EventMeta meta;
+    private Meta meta;
 
-    public List<EventResult>
+    public List<Result>
     getEventResults() {
-        return Results;
+        return Result;
     }
 
-    public void setEventResults(List<EventResult> eventResults) {
-        this.Results = eventResults;
+    public void setEventResults(List<Result> results) {
+        this.Result = results;
     }
 
-    public EventMeta getMeta() {
+    public Meta getMeta() {
         return meta;
     }
 
-    public void setMeta(EventMeta meta) {
+    public void setMeta(Meta meta) {
         this.meta = meta;
     }
 }

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by aj_wi on 30/05/2017.
  */
 
-public class EventMeta {
+public class Meta {
     @SerializedName("next")
     @Expose
     private String next;

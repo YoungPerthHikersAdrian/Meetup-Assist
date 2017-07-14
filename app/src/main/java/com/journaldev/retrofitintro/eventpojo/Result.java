@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
  * Created by aj_wi on 30/05/2017.
  */
 
-public class EventResult {
+public class Result {
     @SerializedName("utc_offset")
     @Expose
     private Long utcOffset;
     @SerializedName("venue")
     @Expose
-    private EventVenue venue;
+    private Venue venue;
     @SerializedName("rsvp_limit")
     @Expose
     private Long rsvpLimit;
@@ -61,15 +61,15 @@ public class EventResult {
     @SerializedName("updated")
     @Expose
     private Long updated;
-    @SerializedName("eventGroup")
+    @SerializedName("group")
     @Expose
-    private EventGroup eventGroup;
+    private Group group;
     @SerializedName("status")
     @Expose
     private String status;
-    @SerializedName("eventFee")
+    @SerializedName("fee")
     @Expose
-    private EventFee eventFee;
+    private Fee fee;
 
     public Long getUtcOffset() {
         return utcOffset;
@@ -79,11 +79,11 @@ public class EventResult {
         this.utcOffset = utcOffset;
     }
 
-    public EventVenue getVenue() {
+    public Venue getVenue() {
         return venue;
     }
 
-    public void setVenue(EventVenue venue) {
+    public void setVenue(Venue venue) {
         this.venue = venue;
     }
 
@@ -215,12 +215,12 @@ public class EventResult {
         this.updated = updated;
     }
 
-    public EventGroup getEventGroup() {
-        return eventGroup;
+    public Group getGroup() {
+        return group;
     }
 
-    public void setEventGroup(EventGroup eventGroup) {
-        this.eventGroup = eventGroup;
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public String getStatus() {
@@ -231,11 +231,11 @@ public class EventResult {
         this.status = status;
     }
 
-    public EventFee getEventFee() {
-        return eventFee;
+    public Fee getFee() {
+        return fee;
     }
 
-    public void setEventFee(EventFee eventFee) {
-        this.eventFee = eventFee;
+    public void setFee(Fee fee) {
+        this.fee = fee;
     }
 }

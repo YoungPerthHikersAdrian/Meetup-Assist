@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by aj_wi on 30/05/2017.
  */
 
-public class EventGroup {
+public class Group {
     @SerializedName("join_mode")
     @Expose
     private String joinMode;
