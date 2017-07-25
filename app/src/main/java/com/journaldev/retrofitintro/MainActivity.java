@@ -134,25 +134,19 @@ public void getNames1(){
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             //Toast.makeText(MainActivity.this,"id:"+id+"pos:"+position+"view"+view,Toast.LENGTH_SHORT).show();
            // Toast.makeText(MainActivity.this,"id:"+listview.isItemChecked(position),Toast.LENGTH_SHORT).show();
+
+
+            CheckBox cb = (CheckBox) view.findViewById(R.id.CheckBox01);
+            cb.performClick();
             listview.setChoiceMode(listview.CHOICE_MODE_MULTIPLE);
-            if (listview.isItemChecked(position)) {
 
-                listview.setItemChecked(position,false);
-
-            } else {
-
-                listview.setItemChecked(position, true);
-            }
             //Toast.makeText(MainActivity.this,"id:"+listview.isItemChecked(position),Toast.LENGTH_SHORT).show();
             adapter.notifyDataSetChanged();
 
 
         }
     });
-    adapter.notifyDataSetChanged();
-   // listview.invalidateViews();
-   // listview.refreshDrawableState();
-   // listview.setAdapter(adapter);
+
 
 
 

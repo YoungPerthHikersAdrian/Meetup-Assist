@@ -19,7 +19,8 @@
         android:padding="10dp"
         android:layout_alignParentRight="true" android:layout_marginRight="6sp"
         android:focusable="false"
-        android:clickable="true">
+        android:focusableInTouchMode="false"
+       >
 
     </CheckBox>
 
