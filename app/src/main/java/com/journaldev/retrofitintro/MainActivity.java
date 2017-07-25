@@ -9,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     APIInterface apiInterface;
 
     private final static String API_KEY = "d7559f69581f1c5121f2b28754c2e";
-    private final static String EVENT_ID = "238434680";
+    private String EVENT_ID = null;
     private final static String GROUP_NAME = "Young-Perth-Hikers";
     private TaskDbHelper mHelper;
     private Toolbar mToolbar;
@@ -84,42 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
         }
 
-        apiInterface = APIClient.getClient().create(APIInterface.class);
 
-        Call<Example> call = apiInterface.getRSVP(API_KEY, EVENT_ID);
-        call.enqueue(new Callback<Example>() {
-
-            @Override
-            public void onResponse(Call<Example> call, Response<Example> response) {
-
-                List<com.journaldev.retrofitintro.pojo.Result> ResList= response.body().getResults();
-
-                SQLiteDatabase db = mHelper.getWritableDatabase();
-                ContentValues values = new ContentValues();
-                for (com.journaldev.retrofitintro.pojo.Result Result: ResList) {
-
-                    values.put(TaskContract.TaskEntry.COLUMN1_NAME,Result.getMember().getMemberId());
-                    values.put(TaskContract.TaskEntry.COLUMN2_NAME,Result.getMember().getName());
-                    values.put(TaskContract.TaskEntry.COLUMN3_NAME,Result.getMemberPhoto().getPhotoLink());
-                    values.put(TaskContract.TaskEntry.COLUMN4_NAME,"N");
-                    db.insert(TaskContract.TaskEntry.TABLE_NAME, null, values);
-
-
-                }
-                db.close();
-                getNames();
-
-
-            }
-
-            @Override
-           public void onFailure(Call<Example> call, Throwable t) {
-                Log.e("Failed on:", t.toString());
-                call.cancel();
-                Toast.makeText(getApplicationContext(), "FAIL", Toast.LENGTH_LONG).show();
-            }
-
-        });
      }
  public List getNames( List data) {
     // int i = 0;
@@ -162,6 +129,48 @@ public void getNames(){
     listview.setAdapter(adapter);
 }
 
+
+public void getAttend(){
+
+    apiInterface = APIClient.getClient().create(APIInterface.class);
+
+    Call<Example> call = apiInterface.getRSVP(API_KEY, EVENT_ID);
+    call.enqueue(new Callback<Example>() {
+
+        @Override
+        public void onResponse(Call<Example> call, Response<Example> response) {
+
+            List<com.journaldev.retrofitintro.pojo.Result> ResList= response.body().getResults();
+
+            SQLiteDatabase db = mHelper.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            for (com.journaldev.retrofitintro.pojo.Result Result: ResList) {
+
+                values.put(TaskContract.TaskEntry.COLUMN1_NAME,Result.getMember().getMemberId());
+                values.put(TaskContract.TaskEntry.COLUMN2_NAME,Result.getMember().getName());
+                values.put(TaskContract.TaskEntry.COLUMN3_NAME,Result.getMemberPhoto().getPhotoLink());
+                values.put(TaskContract.TaskEntry.COLUMN4_NAME,"N");
+                db.insert(TaskContract.TaskEntry.TABLE_NAME, null, values);
+
+
+            }
+            db.close();
+            getNames();
+
+
+        }
+
+        @Override
+        public void onFailure(Call<Example> call, Throwable t) {
+            Log.e("Failed on:", t.toString());
+            call.cancel();
+            Toast.makeText(getApplicationContext(), "FAIL", Toast.LENGTH_LONG).show();
+        }
+
+    });
+
+    }
+
 public String[] getEvents(){
     String[] Event = new String[2];
 
@@ -182,7 +191,9 @@ public String[] getEvents(){
         public void onResponse(Call<EventExample> call, Response<EventExample> response) {
 
                 List<Result> EvList= response.body().getEventResults();
-                List<String> eventName = new ArrayList<String>();
+                //List<Result> IdList = response.body().getEventResults();
+                final List<String> eventName = new ArrayList<String>();
+                final List<String> eventID = new ArrayList<String>();
 
 
                 ContentValues values = new ContentValues();
@@ -191,6 +202,8 @@ public String[] getEvents(){
                     //(eventName.add(com.journaldev.retrofitintro.eventpojo.Result.class.getName()));
 
                    eventName.add(Result.getName());
+                  eventID.add(Result.getId());
+
                     Log.v("**!**",Result.getName());
 
 
@@ -199,14 +212,23 @@ public String[] getEvents(){
 
             ListView listview = (ListView) findViewById(R.id.list1);
             listview.setAdapter(adapter);
+            listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Toast.makeText(MainActivity.this,"event: "+eventName.get(position)+"ID: "+eventID.get(position),Toast.LENGTH_SHORT).show();
+                    EVENT_ID=eventID.get(position);
+                    getAttend();
+                }
+            });
         }
 
-        @Override
+                @Override
         public void onFailure(Call<EventExample> call, Throwable t) {
             Log.e("Failed on:", t.toString());
             //call.cancel();
             Toast.makeText(getApplicationContext(), "FAIL", Toast.LENGTH_LONG).show();
         }
+
 
     });
 
