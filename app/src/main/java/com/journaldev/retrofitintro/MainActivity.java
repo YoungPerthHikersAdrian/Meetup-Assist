@@ -140,6 +140,13 @@ public void getNames1(){
             cb.performClick();
             listview.setChoiceMode(listview.CHOICE_MODE_MULTIPLE);
 
+            //todo add viewholder for check boxes
+            //todowrite view holder to sqllitedata base for persistance
+            //set flag to change state flow once event is selected
+            //init blank->event-> attend
+            //else attend->event->attend
+            //getview holder from sql database
+
             //Toast.makeText(MainActivity.this,"id:"+listview.isItemChecked(position),Toast.LENGTH_SHORT).show();
             adapter.notifyDataSetChanged();
 
