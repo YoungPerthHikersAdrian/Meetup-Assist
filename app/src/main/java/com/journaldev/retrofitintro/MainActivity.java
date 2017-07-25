@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +26,7 @@ import com.journaldev.retrofitintro.eventpojo.EventExample;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -117,16 +120,44 @@ public class MainActivity extends AppCompatActivity {
      db.close();
  }
 
-public void getNames(){
+public void getNames1(){
     List<String> data = new ArrayList<String>();
     //String[] data = new String[10000];
 
     getNames(data);
+     final ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.checkbox_layout,R.id.data,data);
 
-    ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.list_layout,data);
-
-    ListView listview = (ListView) findViewById(R.id.list1);
+    final ListView listview = (ListView) findViewById(R.id.list1);
     listview.setAdapter(adapter);
+    listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //Toast.makeText(MainActivity.this,"id:"+id+"pos:"+position+"view"+view,Toast.LENGTH_SHORT).show();
+           // Toast.makeText(MainActivity.this,"id:"+listview.isItemChecked(position),Toast.LENGTH_SHORT).show();
+            listview.setChoiceMode(listview.CHOICE_MODE_MULTIPLE);
+            if (listview.isItemChecked(position)) {
+
+                listview.setItemChecked(position,false);
+
+            } else {
+
+                listview.setItemChecked(position, true);
+            }
+            //Toast.makeText(MainActivity.this,"id:"+listview.isItemChecked(position),Toast.LENGTH_SHORT).show();
+            adapter.notifyDataSetChanged();
+
+
+        }
+    });
+    adapter.notifyDataSetChanged();
+   // listview.invalidateViews();
+   // listview.refreshDrawableState();
+   // listview.setAdapter(adapter);
+
+
+
+
+
 }
 
 
@@ -155,7 +186,7 @@ public void getAttend(){
 
             }
             db.close();
-            getNames();
+            getNames1();
 
 
         }
@@ -176,7 +207,7 @@ public String[] getEvents(){
 
 
     deleteAll();
-    getNames();
+    //getNames1();
 
     //Get list of upcoming events
 
@@ -215,7 +246,7 @@ public String[] getEvents(){
             listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(MainActivity.this,"event: "+eventName.get(position)+"ID: "+eventID.get(position),Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(MainActivity.this,"event: "+eventName.get(position)+"ID: "+eventID.get(position),Toast.LENGTH_SHORT).show();
                     EVENT_ID=eventID.get(position);
                     getAttend();
                 }
