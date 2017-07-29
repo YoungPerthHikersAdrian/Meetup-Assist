@@ -5,19 +5,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.CheckedTextView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.journaldev.retrofitintro.Adapters.MyRecyclerViewAdapter;
 import com.journaldev.retrofitintro.TaskTable.TaskContract;
 import com.journaldev.retrofitintro.eventpojo.Result;
 import com.journaldev.retrofitintro.pojo.Example;
@@ -26,22 +25,26 @@ import com.journaldev.retrofitintro.eventpojo.EventExample;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
+//import com.journaldev.retrofitintro.Adapter.CheckableLinearLayout;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import com.journaldev.retrofitintro.TaskTable.TaskDbHelper;
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener{
 
     TextView responseText;
     APIInterface apiInterface;
+    MyRecyclerViewAdapter adapter;
+    private ArrayList<Boolean> tempchk= new ArrayList<>();
+    private ArrayList<String> tempID = new ArrayList<>();
 
     private final static String API_KEY = "d7559f69581f1c5121f2b28754c2e";
     private String EVENT_ID = null;
     private final static String GROUP_NAME = "Young-Perth-Hikers";
     private TaskDbHelper mHelper;
     private Toolbar mToolbar;
+    private int Statebit = 0;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -104,14 +107,38 @@ public class MainActivity extends AppCompatActivity {
          if (cursor.moveToFirst()) {
              do {
                  data.add(cursor.getString(0));
-                } while (cursor.moveToNext());
+                 } while (cursor.moveToNext());
          }
+
      }
      db.close();
      return data;
 
 
  }
+
+    public List getTicks(List Viewholder) {
+        // int i = 0;
+        final String TABLE_NAME = "AttendTable";
+
+        //String[] data = new String[10000];
+        String selectQuery = "SELECT AttendStatus FROM " + TABLE_NAME;
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        // data = null;
+        if (cursor != null && cursor.getCount() > 0) {
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Viewholder.add(cursor.getInt(0));
+                } while (cursor.moveToNext());
+            }
+        }
+        db.close();
+        return Viewholder;
+
+
+    }
  public void deleteAll(){
 
      final String TABLE_NAME = "AttendTable";
@@ -120,15 +147,42 @@ public class MainActivity extends AppCompatActivity {
      db.close();
  }
 
-public void getNames1(){
-    List<String> data = new ArrayList<String>();
+public void getNames1() {
+    ArrayList<String> data = new ArrayList<String>();
+    ArrayList<Boolean> viewholder = new ArrayList<Boolean>();
     //String[] data = new String[10000];
 
     getNames(data);
+    getTicks(viewholder);
+    for(int i=0; i < viewholder.size() -1; i++){
+        if(viewholder.get(i)==Boolean.TRUE){
+            viewholder.add(i,Boolean.TRUE);
+        }
+        if(viewholder.get(i)==Boolean.FALSE){
+            viewholder.add(i,Boolean.FALSE);
+        }
+
+    }
+
+    Statebit =1;
+    tempchk = viewholder;
+    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list1);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    adapter = new MyRecyclerViewAdapter(this,data,viewholder);
+    adapter.setClickListener(this);
+    recyclerView.setAdapter(adapter);
+    viewholder=tempchk;
+
+
+/*
      final ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.checkbox_layout,R.id.data,data);
 
     final ListView listview = (ListView) findViewById(R.id.list1);
     listview.setAdapter(adapter);
+    //listview.setadapter ( new adaptername(this));
+
+
+
     listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -137,22 +191,27 @@ public void getNames1(){
 
 
             CheckBox cb = (CheckBox) view.findViewById(R.id.CheckBox01);
-            cb.performClick();
+
+           Toast.makeText(MainActivity.this,"test:"+viewholder.get(position),Toast.LENGTH_SHORT).show();
+            if (viewholder.get(position) == Boolean.TRUE){
+                viewholder.add(position, Boolean.FALSE);
+
+            } else{
+                viewholder.add(position, Boolean.TRUE);
+            }
+
+            Toast.makeText(MainActivity.this,"test:"+viewholder.get(position),Toast.LENGTH_SHORT).show();
+
             listview.setChoiceMode(listview.CHOICE_MODE_MULTIPLE);
 
-            //todo add viewholder for check boxes
-            //todowrite view holder to sqllitedata base for persistance
-            //set flag to change state flow once event is selected
-            //init blank->event-> attend
-            //else attend->event->attend
-            //getview holder from sql database
+
 
             //Toast.makeText(MainActivity.this,"id:"+listview.isItemChecked(position),Toast.LENGTH_SHORT).show();
-            adapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();*/
 
 
-        }
-    });
+        //}
+    //});
 
 
 
@@ -181,7 +240,7 @@ public void getAttend(){
                 values.put(TaskContract.TaskEntry.COLUMN1_NAME,Result.getMember().getMemberId());
                 values.put(TaskContract.TaskEntry.COLUMN2_NAME,Result.getMember().getName());
                 values.put(TaskContract.TaskEntry.COLUMN3_NAME,Result.getMemberPhoto().getPhotoLink());
-                values.put(TaskContract.TaskEntry.COLUMN4_NAME,"N");
+                values.put(TaskContract.TaskEntry.COLUMN4_NAME,Boolean.FALSE);
                 db.insert(TaskContract.TaskEntry.TABLE_NAME, null, values);
 
 
@@ -203,11 +262,28 @@ public void getAttend(){
 
     }
 
+
+/*public void getEvents1(ArrayList eventName, ArrayList eventID){
+
+
+    MyRecyclerViewAdapter1 adapter;
+
+    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list1);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    adapter = new MyRecyclerViewAdapter1(this,eventName,eventID);
+
+
+
+    recyclerView.setAdapter(adapter);
+}*/
+
+
 public String[] getEvents(){
     String[] Event = new String[2];
 
 
     deleteAll();
+    Statebit =0;
     //getNames1();
 
     //Get list of upcoming events
@@ -224,9 +300,9 @@ public String[] getEvents(){
 
                 List<Result> EvList= response.body().getEventResults();
                 //List<Result> IdList = response.body().getEventResults();
-                final List<String> eventName = new ArrayList<String>();
-                final List<String> eventID = new ArrayList<String>();
-
+                final ArrayList<String> eventName = new ArrayList<String>();
+                final ArrayList<String> eventID = new ArrayList<String>();
+                MyRecyclerViewAdapter1 adapter;
 
                 ContentValues values = new ContentValues();
               for (Result  Result: EvList) {
@@ -240,9 +316,22 @@ public String[] getEvents(){
 
 
               }
-           ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.list_layout,eventName);
+              tempID = eventID;
 
-            ListView listview = (ListView) findViewById(R.id.list1);
+
+
+
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list1);
+            recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+            adapter = new MyRecyclerViewAdapter1(MainActivity.this,eventName,eventID);
+            adapter.setClickListener(MainActivity);
+
+            recyclerView.setAdapter(adapter);
+
+
+     /*     ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.list_layout,eventName);
+
+            ListView listview = (ListView) findViewById(R.id.list2);
             listview.setAdapter(adapter);
             listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -251,7 +340,7 @@ public String[] getEvents(){
                     EVENT_ID=eventID.get(position);
                     getAttend();
                 }
-            });
+            });*/
         }
 
                 @Override
@@ -267,5 +356,25 @@ public String[] getEvents(){
 
     return Event;
 }
+    @Override
+    public void onItemClick(View view, int position) {
+        //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        CheckBox cb = (CheckBox) view.findViewById(R.id.CheckBox01);
+        cb.performClick();
+        if(cb.isChecked()){
+            tempchk.add(position,Boolean.TRUE);
+
+        } else{
+            tempchk.add(position,Boolean.FALSE);
+        }
+    }
+
+
+
+    public void onItemClick1(View view, int position) {
+        EVENT_ID=tempID.get(position);
+        getAttend();
+
+    }
 
 }
