@@ -3,6 +3,7 @@ package com.journaldev.retrofitintro;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     private final static String GROUP_NAME = "Young-Perth-Hikers";
     private TaskDbHelper mHelper;
     private Toolbar mToolbar;
+    private Integer mPos;
+    private Integer mCheck;
     private int Statebit = 0;
 
     @Override
@@ -149,29 +152,31 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
 public void getNames1() {
     ArrayList<String> data = new ArrayList<String>();
-    ArrayList<Boolean> viewholder = new ArrayList<Boolean>();
+    ArrayList<Integer> viewholder = new ArrayList<Integer>();
+    ArrayList<Boolean> viewholder1 = new ArrayList<Boolean>();
     //String[] data = new String[10000];
 
     getNames(data);
     getTicks(viewholder);
-    for(int i=0; i < viewholder.size() -1; i++){
-        if(viewholder.get(i)==Boolean.TRUE){
-            viewholder.add(i,Boolean.TRUE);
+   for(int i=0; i < viewholder.size(); i++){
+        if(viewholder.get(i)==1){
+            viewholder1.add(i,Boolean.TRUE);
         }
-        if(viewholder.get(i)==Boolean.FALSE){
-            viewholder.add(i,Boolean.FALSE);
+        if(viewholder.get(i)==0){
+            viewholder1.add(i,Boolean.FALSE);
         }
 
     }
 
     Statebit =1;
-    tempchk = viewholder;
+    tempchk = viewholder1;
     RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list1);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
-    adapter = new MyRecyclerViewAdapter(this,data,viewholder);
+    adapter = new MyRecyclerViewAdapter(this,data,tempchk,1);
     adapter.setClickListener(this);
     recyclerView.setAdapter(adapter);
-    viewholder=tempchk;
+    viewholder1=tempchk;
+
 
 
 /*
@@ -302,7 +307,7 @@ public String[] getEvents(){
                 //List<Result> IdList = response.body().getEventResults();
                 final ArrayList<String> eventName = new ArrayList<String>();
                 final ArrayList<String> eventID = new ArrayList<String>();
-                MyRecyclerViewAdapter1 adapter;
+                MyRecyclerViewAdapter adapter;
 
                 ContentValues values = new ContentValues();
               for (Result  Result: EvList) {
@@ -318,16 +323,32 @@ public String[] getEvents(){
               }
               tempID = eventID;
 
+            ArrayList<Boolean> viewholder = new ArrayList<Boolean>();
+            //String[] data = new String[10000];
 
 
+            getTicks(viewholder);
+            for(int i=0; i < viewholder.size() -1; i++) {
+                if (viewholder.get(i) == Boolean.TRUE) {
+                    viewholder.add(i, Boolean.TRUE);
+                }
+                if (viewholder.get(i) == Boolean.FALSE) {
+                    viewholder.add(i, Boolean.FALSE);
+                }
+            }
 
             RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list1);
             recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-            adapter = new MyRecyclerViewAdapter1(MainActivity.this,eventName,eventID);
-            adapter.setClickListener(MainActivity);
+            adapter = new MyRecyclerViewAdapter(MainActivity.this,eventName,viewholder,0);
 
+            adapter.setClickListener(MainActivity.this);
             recyclerView.setAdapter(adapter);
-
+            mCheck =0;
+            if(mPos != null){
+                mCheck =1;
+                EVENT_ID = eventID.get(mPos);
+                getAttend();
+            }
 
      /*     ArrayAdapter<String>adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.list_layout,eventName);
 
@@ -359,13 +380,24 @@ public String[] getEvents(){
     @Override
     public void onItemClick(View view, int position) {
         //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
-        CheckBox cb = (CheckBox) view.findViewById(R.id.CheckBox01);
-        cb.performClick();
-        if(cb.isChecked()){
-            tempchk.add(position,Boolean.TRUE);
 
-        } else{
-            tempchk.add(position,Boolean.FALSE);
+        mPos = position;
+
+        if (mCheck == 1) {
+            CheckBox cb = (CheckBox) view.findViewById(R.id.CheckBox01);
+            if (cb.isChecked()) {
+                //cb.performClick();
+                tempchk.add(position, Boolean.TRUE);
+
+            } else {
+                //cb.performClick();
+                tempchk.add(position, Boolean.FALSE);
+            }
+        } else {
+            mCheck =1;
+            EVENT_ID=tempID.get(position);
+            getAttend();
+
         }
     }
 
